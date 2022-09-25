@@ -1,0 +1,76 @@
+<form class="login-register-form" action="/products" method="POST" enctype="multipart/form-data">
+    <div>
+        <label for="name">Nombre del Producto</label>
+        <input class='control' type="text" id="name" name="name" placeholder="Mesa Ratona">
+        <% if (locals.errors && errors.name) { %>
+            <div class="errorValidacion">
+                <p><%= errors.name.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div>
+        <label for="description">Descripción</label>
+        <textarea class='control' id="description" name="description" placeholder="Comentario del producto"></textarea>
+        <% if (locals.errors && errors.description) { %>
+            <div class="errorValidacion">
+                <p><%= errors.description.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div>
+        <label for="image">Imagen</label>
+        <input class='control' type="file" id="image" name="image" multiple accept=".jpg, .png, .jpeg, .svg">
+        <% if (locals.errors && errors.image) { %>
+            <div class="errorValidacion">
+                <p><%= errors.image.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div>
+        <label for="size">Medidas</label>
+        <input class='control' type="text" id="measures" name="measures" placeholder="Largo - Ancho - Alto">
+        <% if (locals.errors && errors.measures) { %>
+            <div class="errorValidacion">
+                <p><%= errors.measures.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div>
+        <label for="price">Precio</label>
+        <input class='control' type="number" id="price" name="price" placeholder="$10000" >
+        <% if (locals.errors && errors.price) { %>
+            <div class="errorValidacion">
+                <p><%= errors.price.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div>
+        <label for="discount">Descuento</label>
+        <input class='control' type="number" id="discount" name="discount" placeholder="10" >
+        <% if (locals.errors && errors.discount) { %>
+            <div class="errorValidacion">
+                <p><%= errors.discount.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div>
+        <label for="category">Categoría</label>
+        <select name="category" id="category" class="category-control">
+            <option value="">Elegí</option>
+            <option value="table">Mesas</option>
+            <option value="coffeeTable">Mesas Ratonas</option>
+            <option value="desk">Escritorios</option>
+            <option value="mirror">Espejos</option>
+        </select>
+        <% if (locals.errors && errors.category) { %>
+            <div class="errorValidacion">
+                <p><%= errors.category.msg %></p>
+            </div> 
+        <% } %>
+    </div>
+    <div class="create-btn">
+        <input class="button" type="submit" value="GUARDAR">
+        <input class="button" type="reset" value="LIMPIAR">
+    </div>
+</form> 
+
