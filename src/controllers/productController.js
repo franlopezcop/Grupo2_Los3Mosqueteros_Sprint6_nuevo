@@ -14,10 +14,10 @@ const productController = {
             const allProducts = await db.Products.findAll({
                 include: [db.Images]
             }) // productos todo lo que labura con el array de productos va con allproducts
-            const table = allProducts.filter( product => product.category == "table" );
-            const coffeeTable = allProducts.filter( product => product.category == "coffeeTable" );
-            const desk = allProducts.filter( product => product.category == "desk" );
-            const mirror = allProducts.filter( product => product.category == "mirror" );
+            const table = allProducts.filter( product => product.id_category == "2" );
+            const coffeeTable = allProducts.filter( product => product.id_category == "4" );
+            const desk = allProducts.filter( product => product.id_category == "1" );
+            const mirror = allProducts.filter( product => product.id_category == "3" );
             
             res.render("productos/products",
             {
@@ -49,7 +49,7 @@ const productController = {
     detail: async (req,res) =>{
         try {            
             const id = +req.params.id;
-            const product = await db.Products.findById(id,{
+            const product = await db.Products.findByPk(id,{
                 include:[db.Images, db.Colors, db.Categories]
             });
             res.render("./productos/productDetail",
