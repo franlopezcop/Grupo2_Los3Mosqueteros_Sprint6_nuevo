@@ -109,7 +109,7 @@ const userController = {
                     title: "Login"
                 })
             }
-            const usuarioRegistrado = Users.findOne({where:{'email' : req.body.email}});
+            const usuarioRegistrado = await Users.findOne({where:{'email' : req.body.email}});
             console.log(usuarioRegistrado)
             if(!usuarioRegistrado){
                 const error = {
