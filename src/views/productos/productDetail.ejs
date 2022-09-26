@@ -36,7 +36,7 @@
                         </form>
                         <!-- Agregado de boton editar y eliminar-->
                         
-                        <% if (locals.usuarioLogueado && locals.usuarioLogueado.admin == true) { %>
+                        <% if (locals.estaLogueado && locals.estaLogueado.admin == true) { %>
                         <div class="button-admin">
                             <a href="/products/edit/<%= product.id %>">
                                 <button class="button-edit">Editar <i class="fa-solid fa-file-pen"></i></button>
