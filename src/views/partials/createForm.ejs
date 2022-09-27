@@ -68,6 +68,21 @@
             </div> 
         <% } %>
     </div>
+    <div>
+        <label for="colors">Color</label>
+        <select name="colors" id="colors" class="control">
+                <option value="">Elegí</option>
+                <option value="black">Negro</option>
+                <option value="brown">Marrón</option>
+                <option value="white">Blanco</option>
+            </select>
+            <% if (locals.errors && errors.colors) { %>
+                <div class="errorValidacion">
+                    <p><%= errors.colors.msg %></p>
+                </div> 
+            <% } %>
+    </div>
+
     <div class="create-btn">
         <input class="button" type="submit" value="GUARDAR">
         <input class="button" type="reset" value="LIMPIAR">

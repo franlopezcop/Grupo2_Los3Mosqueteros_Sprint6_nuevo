@@ -219,6 +219,10 @@ div .img-product{
     justify-content: space-around;
 
 }
+p.discount h4 {
+    align-self: center;
+}
+
 .button-carrito{
     font-size: 12px;
     background-color: #535C66;
@@ -811,9 +815,10 @@ p.price {
 }
 
 p.discount {
-    width: 40%;
-    font-size: 10px;
+    width: 100%;
+    font-size: 15px;
     align-self: center;
+    margin-top: 3px;
 }
 
 h4.description {
