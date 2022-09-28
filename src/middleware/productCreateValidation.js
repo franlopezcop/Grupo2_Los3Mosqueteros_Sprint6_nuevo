@@ -10,8 +10,11 @@ const productCreateValidation = [
 	body('price')
         .notEmpty().withMessage("No puede estar el campo vacio"),
         
-	body("category")
+	body("id_category")
         .notEmpty().withMessage("Debe seleccionar una categoría"),
+
+    body("id_color")
+        .notEmpty().withMessage("Debe seleccionar un color"),
 
 	body('description')
         .notEmpty().withMessage('Debe escribir una descripción').bail()

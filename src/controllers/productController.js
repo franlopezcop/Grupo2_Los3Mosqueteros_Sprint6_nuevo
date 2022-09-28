@@ -101,7 +101,15 @@ const productController = {
                     categories
                 })
             }
-            let product = req.body
+            let product = {
+                name: req.body.name,
+                description: req.body.description,
+                price: req.body.price,
+                discount: req.body.discount,
+                id_category: req.body.category,
+                measures: req.body.measures,
+                id_color: req.body.color,
+            }
             let images = []
             const nuevoProducto = await db.Product.create(product);
             for(let i = 0 ; i<files.length;i++) {
