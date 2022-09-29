@@ -57,24 +57,47 @@
         <label for="category">Categoría</label>
         <select name="id_category" id="id_category" class="category-control">
             <option value="">Elegí</option>
-            <option value="2">Mesas</option>
-            <option value="4">Mesas Ratonas</option>
-            <option value="1">Escritorios</option>
-            <option value="3">Espejos</option>
-        </select>
-        <% if (locals.errors && errors.category) { %>
+            <% if (categories) {%> 
+                <% categories.forEach(category => { %> 
+                    <option value="<%=category.id%>" 
+                        <%= locals.oldData && oldData.categoryId == category.id ? 'selected' : null %>
+                        >
+                        <%=category.name%>
+                    </option>
+                <% }); %> 
+                <% } %> 
+           <!--
+               <option value="2">Mesas</option>
+               <option value="4">Mesas Ratonas</option>
+               <option value="1">Escritorios</option>
+               <option value="3">Espejos</option>*/
+               
+            -->
+            </select>
+        <% if (locals.errors && errors.id_category) { %>
             <div class="errorValidacion">
-                <p><%= errors.category.msg %></p>
+                <p><%= errors.id_category.msg %></p>
             </div> 
         <% } %>
     </div>
     <div>
         <label for="color">Color</label>
         <select name="id_color" id="color" class="control">
-                <option value="">Elegí</option>
-                <option value="black">Negro</option>
-                <option value="brown">Marrón</option>
-                <option value="white">Blanco</option>
+            <option value="">Elegí</option>
+            <% if (colors) {%> 
+                <% colors.forEach(color => { %> 
+                    <option value="<%=color.id%>" 
+                        <%= locals.oldData && oldData.id_color == color.id ? 'selected' : null %>
+                        >
+                        <%=color.name%>
+                    </option>
+                <% }); %> 
+                <% } %> 
+            <!--
+                <option value="1">Negro</option>
+                <option value="2">Marrón</option>
+                <option value="3">Blanco</option>
+            -->
             </select>
             <% if (locals.errors && errors.colors) { %>
                 <div class="errorValidacion">

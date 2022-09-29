@@ -79,7 +79,7 @@ const productController = {
     },
 
     // Create -  Method to store
-    store: async (req, res) => {
+   /* store: async (req, res) => {
 		try {
             const files = req.files
             
@@ -133,6 +133,54 @@ const productController = {
             res.json({error: error.message}); 
         }
 
+	},*/
+    store: async (req, res) => {
+		try {
+            const files = req.files
+            let product = req.body
+            const resultadosValidaciones = validationResult(req);
+            if (!resultadosValidaciones.isEmpty()){
+                let images = []
+                const nuevoProducto = await db.Products.create(product);
+                for(let i = 0 ; i<files.length;i++) {
+                    images.push({
+                        path: req.files.filename,
+                        id_product: nuevoProducto.id
+                    })
+                }
+                if (images.length > 0) {
+                    await db.Images.bulkCreate(images)
+                    res.redirect('/products')
+
+                } else {
+                    await db.Images.create([{
+                        path: 'default-product-image.svg',
+                        id_product: nuevoProducto.id
+                    }])
+                    res.redirect('/products')
+                }
+             } else {
+                if (req.files) {
+                    let {files} = req;
+                for (let i = 0 ; i< files.length; i++) {
+                    fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files.filename}`));
+                }
+                };
+                    const colors = await db.Colors.findAll();
+                    const categories = await db.Categories.findAll()
+                    return res.render('./productos/addProduct', {
+                        title: "Crear producto",
+                        errors: resultadosValidaciones.mapped(),
+                        // oldData son los datos recién cargados es decir el req.body
+                        oldData: req.body,
+                        colors,
+                        categories
+                    })
+                }
+            
+        } catch (error) {
+            res.json({error: error.message}); 
+        }
 	},
 
     // Update - Form to edit
