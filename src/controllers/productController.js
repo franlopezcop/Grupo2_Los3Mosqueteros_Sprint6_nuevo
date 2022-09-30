@@ -71,7 +71,7 @@ const productController = {
     create: async (req,res) =>{
         try {
             const colors = await db.Colors.findAll();
-            const categories = await db.Categories.findAll()            
+            const categories = await db.Categories.findAll()    
             res.render("productos/addProduct", {colors, categories, title: "Crear producto"},)
         } catch (error) {
             res.json({error: error.message}); 
@@ -139,12 +139,12 @@ const productController = {
             const files = req.files
             let product = req.body
             const resultadosValidaciones = validationResult(req);
-            if (!resultadosValidaciones.isEmpty()){
+            if (resultadosValidaciones.isEmpty()){
                 let images = []
                 const nuevoProducto = await db.Products.create(product);
                 for(let i = 0 ; i<files.length;i++) {
                     images.push({
-                        path: req.files.filename,
+                        path: req.files[i].filename,
                         id_product: nuevoProducto.id
                     })
                 }
@@ -155,15 +155,16 @@ const productController = {
                 } else {
                     await db.Images.create([{
                         path: 'default-product-image.svg',
-                        id_product: nuevoProducto.id
+                        id_product: product.id
                     }])
                     res.redirect('/products')
                 }
              } else {
+                let {files} = req;
                 if (req.files) {
-                    let {files} = req;
                 for (let i = 0 ; i< files.length; i++) {
-                    fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files.filename}`));
+                    //fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files[i].filename}`));
+                    fs.unlinkSync(path.resolve(__dirname, `../../public/images/products/${files[i].filename}`));
                 }
                 };
                     const colors = await db.Colors.findAll();
@@ -281,36 +282,37 @@ const productController = {
 
     // Update - Method to delete
 
-    destroy: async function(req,res){
+    destroy: async (req,res) => {
         try {
             const { id } = req.params;
-            let imagenesBorrar = await db.Images.findAll({where: {id_product: id}});
-            if (imagenesBorrar) {
-                let filesBorrar = imagenesBorrar.filter(image => image.fileName != 'default-product-image.png');
-            for (let i = 0 ; i< filesBorrar.length; i++) {
-                fs.unlinkSync(path.resolve(__dirname, '../../public/images/'+filesBorrar[i].fileName))
+            let imagenes = await db.Images.findAll({
+                where: {productId: id}
+            });
+            if (imagenes) {
+                let files = imagenes.filter(image => image.fileName != 'default-product-image.png');
+            for (let i = 0 ; i< files.length; i++) {
+                fs.unlinkSync(path.resolve(__dirname, '../../public/images/'+files[i].fileName))
             }
             };
-            await db.Images.destroy({
+            await db.Image.destroy({
                 where: {
-                    product_id: id
-                }               
+                    productId: id
+                }
             }, {
                 force: true
-            })
-            await db.Products.destroy({
+            });
+            await db.Product.destroy({
                 where: {
                     id
-                }               
+                }
             }, {
                 force: true
-            })
-            res.redirect("/");
+            });
+            res.redirect("/productos")
         } catch (error) {
-            res.json({error: error.message}); 
+            res.json(error.message)
         }
-
-    }
+    },
 
 }
 
