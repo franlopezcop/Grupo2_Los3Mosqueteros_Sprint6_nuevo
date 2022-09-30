@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const db = require('../database/models');
 const {Products, Images} = require('../database/models')
 const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 // const universalModel = require('../model/universalModel');
@@ -8,7 +9,7 @@ const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const mainController = {
     home: async (req,res) =>{
         try {
-            const allProductos = await Products.findAll({
+            const allProductos = await db.Products.findAll({
                 include: [Images]
             })
             const saleProducts = allProductos.filter( product => product.discount != 0 );
