@@ -71,7 +71,7 @@ const productController = {
     create: async (req,res) =>{
         try {
             const colors = await db.Colors.findAll();
-            const categories = await db.Categories.findAll()            
+            const categories = await db.Categories.findAll()    
             res.render("productos/addProduct", {colors, categories, title: "Crear producto"},)
         } catch (error) {
             res.json({error: error.message}); 
@@ -155,15 +155,16 @@ const productController = {
                 } else {
                     await db.Images.create([{
                         path: 'default-product-image.svg',
-                        id_product: nuevoProducto.id
+                        id_product: product.id
                     }])
                     res.redirect('/products')
                 }
              } else {
+                let {files} = req;
                 if (req.files) {
-                    let {files} = req;
                 for (let i = 0 ; i< files.length; i++) {
-                    fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files[i].filename}`));
+                    //fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files[i].filename}`));
+                    fs.unlinkSync(path.resolve(__dirname, `../../public/images/products/${files[i].filename}`));
                 }
                 };
                     const colors = await db.Colors.findAll();
@@ -281,7 +282,7 @@ const productController = {
 
     // Update - Method to delete
 
-    destroy: async function(req,res){
+    destroy: async (req,res) => {
         try {
             const { id } = req.params;
             let imagenesBorrar = await db.Images.findAll({where: {id_product: id}});
@@ -305,18 +306,15 @@ const productController = {
             await db.Products.destroy({
                 where: {
                     id
-                }               
+                }
             }, {
                 force: true
-            })
-            
-            ;
+            });
             res.redirect("/products");
         } catch (error) {
-            res.json({error: error.message}); 
+            res.json(error.message)
         }
-
-    }
+    },
 
 }
 
