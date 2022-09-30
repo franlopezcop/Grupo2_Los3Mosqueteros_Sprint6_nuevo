@@ -139,7 +139,7 @@ const productController = {
             const files = req.files
             let product = req.body
             const resultadosValidaciones = validationResult(req);
-            if (!resultadosValidaciones.isEmpty()){
+            if (resultadosValidaciones.isEmpty()){
                 let images = []
                 const nuevoProducto = await db.Products.create(product);
                 for(let i = 0 ; i<files.length;i++) {
