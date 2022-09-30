@@ -104,7 +104,9 @@
                                     <a class="link-detail" href="/products/detalle/<%= product.id %>"> <!-- Faltaria agregar la ruta dinamica con el :id y tambien agregarselo al route del detalle -->
                                         <article>
                                             <figure>
-                                                <img src="/images/products/<%= product.Images[0].path %>" class="product_img" width=250px alt="escritorio">
+                                              
+                                                  <img src="/images/products/<%= product.Images[0]?.path %>" class="product_img" width=250px alt="escritorio">
+                                             
                                             </figure>
                                             <div class="main-article">
                                                 <h4 class="description"> <%= product.name %> </h4>

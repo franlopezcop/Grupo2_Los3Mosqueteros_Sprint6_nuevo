@@ -71,7 +71,7 @@ const productController = {
     create: async (req,res) =>{
         try {
             const colors = await db.Colors.findAll();
-            const categories = await db.Categories.findAll()            
+            const categories = await db.Categories.findAll()    
             res.render("productos/addProduct", {colors, categories, title: "Crear producto"},)
         } catch (error) {
             res.json({error: error.message}); 
@@ -79,7 +79,7 @@ const productController = {
     },
 
     // Create -  Method to store
-    store: async (req, res) => {
+   /* store: async (req, res) => {
 		try {
             const files = req.files
             
@@ -101,7 +101,15 @@ const productController = {
                     categories
                 })
             }
-            let product = req.body
+            let product = {
+                name: req.body.name,
+                description: req.body.description,
+                price: req.body.price,
+                discount: req.body.discount,
+                id_category: req.body.category,
+                measures: req.body.measures,
+                id_color: req.body.color,
+            }
             let images = []
             const nuevoProducto = await db.Product.create(product);
             for(let i = 0 ; i<files.length;i++) {
@@ -125,24 +133,75 @@ const productController = {
             res.json({error: error.message}); 
         }
 
+	},*/
+    store: async (req, res) => {
+		try {
+            const files = req.files
+            let product = req.body
+            const resultadosValidaciones = validationResult(req);
+            if (resultadosValidaciones.isEmpty()){
+                let images = []
+                const nuevoProducto = await db.Products.create(product);
+                for(let i = 0 ; i<files.length;i++) {
+                    images.push({
+                        path: req.files[i].filename,
+                        id_product: nuevoProducto.id
+                    })
+                }
+                if (images.length > 0) {
+                    await db.Images.bulkCreate(images)
+                    res.redirect('/products')
+
+                } else {
+                    await db.Images.create([{
+                        path: 'default-product-image.svg',
+                        id_product: product.id
+                    }])
+                    res.redirect('/products')
+                }
+             } else {
+                let {files} = req;
+                if (req.files) {
+                for (let i = 0 ; i< files.length; i++) {
+                    //fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files[i].filename}`));
+                    fs.unlinkSync(path.resolve(__dirname, `../../public/images/products/${files[i].filename}`));
+                }
+                };
+                    const colors = await db.Colors.findAll();
+                    const categories = await db.Categories.findAll()
+                    return res.render('./productos/addProduct', {
+                        title: "Crear producto",
+                        errors: resultadosValidaciones.mapped(),
+                        // oldData son los datos recién cargados es decir el req.body
+                        oldData: req.body,
+                        colors,
+                        categories
+                    })
+                }
+            
+        } catch (error) {
+            res.json({error: error.message}); 
+        }
 	},
 
     // Update - Form to edit
 
     edit: async (req,res) =>{
         try {
-            const productToEdit = await db.Products.findByPk(req.params.id,{
-                include:[db.Images, db.Colors, db.Categories]
-            });
             const colors = await db.Colors.findAll();
             const categories = await db.Categories.findAll()
+            let idToUpdate = +req.params.id
+            const productToEdit = await db.Products.findByPk(idToUpdate,{
+                include:[db.Images, db.Colors, db.Categories]
+            });
             
             res.render("./productos/editProduct",
             {
                 title: "Editar producto",
                 productToEdit,
                 colors,
-                categories
+                categories,
+                idToUpdate
             }
             )
         } catch (error) {
@@ -155,7 +214,7 @@ const productController = {
     update: async (req, res) => {
 		try {
             const files = req.files
-            const idToUpdate = req.params.id;
+            let idToUpdate = req.params.id;
     
             const resultadosValidaciones = validationResult(req);
             console.log(resultadosValidaciones);
@@ -165,10 +224,15 @@ const productController = {
                 console.log("----- ojo HAY ERRORES -----------------")
                 
                 // Si hay errores borramos los archivos que cargó multer
-                files.forEach( file => {
-                    const filePath = path.join(__dirname, `../../public/images/products/${file.filename}`);
-                    fs.unlinkSync(filePath);
-                })
+                if(files){
+                    for (let i = 0 ; i< files.length; i++) {
+                        fs.unlinkSync(path.resolve(__dirname, '../../public/images/products'+files[i].filename))
+                    } 
+                }
+                // files.forEach( file => {
+                //     const filePath = path.join(__dirname, `../../public/images/products/${file.filename}`);
+                //     fs.unlinkSync(filePath);
+                // })
                 
                 console.log("-------- my body -------------------")
                 console.log(req.body);  
@@ -204,7 +268,7 @@ const productController = {
             if (images.length > 0) {
                 const oldImages = await db.Images.findAll({where: {id_product: idToUpdate}})
                 oldImages.forEach( image => {
-                    fs.unlinkSync(path.resolve(__dirname, '../../public/images/'+image.fileName))
+                    fs.unlinkSync(path.resolve(__dirname, '../../public/images/products'+image.path))
                 })
                 await db.Images.destroy({where: {id_product: idToUpdate}})
                 await db.Images.bulkCreate(images)
@@ -225,36 +289,39 @@ const productController = {
 
     // Update - Method to delete
 
-    destroy: async function(req,res){
+    destroy: async (req,res) => {
         try {
             const { id } = req.params;
             let imagenesBorrar = await db.Images.findAll({where: {id_product: id}});
+            console.log("Estos estoy borrando:" + imagenesBorrar);
             if (imagenesBorrar) {
-                let filesBorrar = imagenesBorrar.filter(image => image.fileName != 'default-product-image.png');
-            for (let i = 0 ; i< filesBorrar.length; i++) {
-                fs.unlinkSync(path.resolve(__dirname, '../../public/images/'+filesBorrar[i].fileName))
-            }
+                let filesBorrar = imagenesBorrar.filter(image => image.path != 'default-product-image.png');
+                for (let i = 0 ; i< filesBorrar.length; i++) {
+                    if (filesBorrar[i].path != null ) {
+                        fs.unlinkSync(path.resolve(__dirname, '../../public/images/products/'+filesBorrar[i].path))
+                    }
+                }
+                await db.Images.destroy({
+                    where: {
+                        id_product: id
+                    }               
+                }, {
+                    force: true
+                })
             };
-            await db.Images.destroy({
-                where: {
-                    product_id: id
-                }               
-            }, {
-                force: true
-            })
+            
             await db.Products.destroy({
                 where: {
                     id
-                }               
+                }
             }, {
                 force: true
-            })
-            res.redirect("/");
+            });
+            res.redirect("/products");
         } catch (error) {
-            res.json({error: error.message}); 
+            res.json(error.message)
         }
-
-    }
+    },
 
 }
 

@@ -10,7 +10,7 @@
     <main class="main-login-register">
         
             <h2 class="title">EDITAR PRODUCTO</h2>
-            <form class="login-register-form" action="/products/edit/<%= productToEdit.id %>?_method=PUT"  method="POST" enctype="multipart/form-data">
+            <form class="login-register-form" action="/products/edit/<%= locals.productToEdit && productToEdit.id  || idToUpdate%>?_method=PUT"  method="POST" enctype="multipart/form-data">
                 <div>
                     <label for="name">Nombre del Producto</label>
                     <input class='control' type="text" id="name" name="name" value="<%= productToEdit.name %> ">
@@ -22,7 +22,7 @@
                 </div>
                 <div>
                     <label for="description">Descripción</label>
-                    <textarea class='control' id="description" name="description" placeholder="Comentario del producto" value=""><%= productToEdit.description %></textarea>
+                    <textarea class='control' id="description" name="description" placeholder="Comentario del producto" value=""><%= locals.productToEdit && productToEdit.description || locals.oldData && oldData.description %></textarea>
                     <% if (locals.errors && errors.description) { %>
                         <div class="errorValidacion">
                             <p><%= errors.description.msg %></p>
@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <label for="image">Imagen</label>
-                    <input class='control' type="file" id="image" name="image" multiple accept=".jpg, .png, .jpeg, .svg" value="<%= productToEdit.image%>">
+                    <input class='control' type="file" id="image" name="image" multiple accept=".jpg, .png, .jpeg, .svg"> 
                     <% if (locals.errors && errors.image) { %>
                         <div class="errorValidacion">
                             <p><%= errors.image.msg %></p>
@@ -40,7 +40,7 @@
                 </div>
                 <div>
                     <label for="size">Medidas</label>
-                    <input class='control' type="text" id="measures" name="measures" value="<%= parseInt(productToEdit.measures) %>">
+                    <input class='control' type="text" id="measures" name="measures" value="<%= locals.productToEdit && productToEdit.measures || locals.oldData && oldData.measures %>">
                     <% if (locals.errors && errors.measures) { %>
                         <div class="errorValidacion">
                             <p><%= errors.measures.msg %></p>
@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <label for="price">Precio</label>
-                    <input class='control' type="number" id="price" name="price" value="<%= parseInt(productToEdit.price) %>" >
+                    <input class='control' type="number" id="price" name="price" value="<%= locals.productToEdit && productToEdit.price || locals.oldData && oldData.price %>" >
                     <% if (locals.errors && errors.price) { %>
                         <div class="errorValidacion">
                             <p><%= errors.price.msg %></p>
@@ -58,33 +58,59 @@
                 </div>
                 <div>
                     <label for="discount">Descuento</label>
-                    <input class='control' type="number" id="discount" name="discount" value="<%= parseInt(productToEdit.discount) %>" >
+                    <input class='control' type="number" id="discount" name="discount" placeholder="0" value="<%= locals.productToEdit && productToEdit.discount || locals.oldData && oldData.discount %>" >
 
                 </div>
                 <div>
                     <label for="category">Categoría</label>
-                    <select name="category" id="category" class="category-control">
-                        <option value="">Elegí</option>
+                    <select name="id_category" id="category" class="category-control">
+                        <!-- <option value="">Elegí</option>
                         <option value="table">Mesas</option>
                         <option value="coffeeTable">Mesas Ratonas</option>
                         <option value="desk">Escritorios</option>
-                        <option value="mirror">Espejos</option>
+                        <option value="mirror">Espejos</option> -->
+                        <% if (categories) {%> 
+                            <% categories.forEach(category => { %> 
+                                <option value="<%=category.id%>" 
+                                    <% if (locals.oldData && oldData.id_category) { %>
+                                        <%= category.id == oldData.id_category ? "selected" : null %>
+                                    <% } else { %>
+                                        <%= category.name == productToEdit.Categories?.name ? "selected" : null %>
+                                    <% } %> 
+                                    >
+                                    <%=category.name%>
+                                </option>
+                            <% }); %> 
+                            <% } %> 
                     </select>
-                    <% if (locals.errors && errors.category) { %>
+                    <% if (locals.errors && errors.id_category) { %>
                         <div class="errorValidacion">
-                            <p><%= errors.category.msg %></p>
+                            <p><%= errors.id_category.msg %></p>
                         </div> 
                     <% } %>
                 </div>
                 <div>
                     <label for="colors">Color</label>
-                    <select name="colors" id="colors" class="control">
-                            <option value="">Elegí</option>
+                    <select name="id_color" id="colors" class="control">
+                            <!-- <option value="">Elegí</option>
                             <option value="black">Negro</option>
                             <option value="brown">Marrón</option>
-                            <option value="white">Blanco</option>
+                            <option value="white">Blanco</option> -->
+                            <% if (colors) {%> 
+                                <% colors.forEach(color => { %> 
+                                    <option value="<%=color.id%>" 
+                                        <% if (locals.oldData && oldData.id_colors) { %>
+                                            <%= color.id == oldData.id_color ? "selected" : null %>
+                                        <% } else { %>
+                                            <%= color.name == productToEdit.Colors?.name ? "selected" : null %>
+                                        <% } %> 
+                                        >
+                                        <%=color.name%>
+                                    </option>
+                                <% }); %> 
+                                <% } %> 
                         </select>
-                        <% if (locals.errors && errors.colors) { %>
+                        <% if (locals.errors && errors.id_colors) { %>
                             <div class="errorValidacion">
                                 <p><%= errors.colors.msg %></p>
                             </div> 
