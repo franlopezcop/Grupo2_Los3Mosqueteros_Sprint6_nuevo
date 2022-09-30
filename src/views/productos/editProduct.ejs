@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <label for="image">Imagen</label>
-                    <input class='control' type="file" id="image" name="image" multiple accept=".jpg, .png, .jpeg, .svg" value="<%= productToEdit.image%>">
+                    <input class='control' type="file" id="image" name="image" multiple accept=".jpg, .png, .jpeg, .svg"> 
                     <% if (locals.errors && errors.image) { %>
                         <div class="errorValidacion">
                             <p><%= errors.image.msg %></p>

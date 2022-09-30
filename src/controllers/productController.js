@@ -218,7 +218,7 @@ const productController = {
             console.log(resultadosValidaciones);
            
             // Con este if preguntamos si hay errores de validación
-            if (!resultadosValidaciones.isEmpty()){
+            if (resultadosValidaciones.isEmpty()){
                 console.log("----- ojo HAY ERRORES -----------------")
                 
                 // Si hay errores borramos los archivos que cargó multer
@@ -285,30 +285,32 @@ const productController = {
     destroy: async (req,res) => {
         try {
             const { id } = req.params;
-            let imagenes = await db.Images.findAll({
-                where: {productId: id}
-            });
-            if (imagenes) {
-                let files = imagenes.filter(image => image.fileName != 'default-product-image.png');
-            for (let i = 0 ; i< files.length; i++) {
-                fs.unlinkSync(path.resolve(__dirname, '../../public/images/'+files[i].fileName))
-            }
-            };
-            await db.Image.destroy({
-                where: {
-                    productId: id
+            let imagenesBorrar = await db.Images.findAll({where: {id_product: id}});
+            console.log("Estos estoy borrando:" + imagenesBorrar);
+            if (imagenesBorrar) {
+                let filesBorrar = imagenesBorrar.filter(image => image.path != 'default-product-image.png');
+                for (let i = 0 ; i< filesBorrar.length; i++) {
+                    if (filesBorrar[i].path != null ) {
+                        fs.unlinkSync(path.resolve(__dirname, '../../public/images/products/'+filesBorrar[i].path))
+                    }
                 }
-            }, {
-                force: true
-            });
-            await db.Product.destroy({
+                await db.Images.destroy({
+                    where: {
+                        id_product: id
+                    }               
+                }, {
+                    force: true
+                })
+            };
+            
+            await db.Products.destroy({
                 where: {
                     id
                 }
             }, {
                 force: true
             });
-            res.redirect("/productos")
+            res.redirect("/products");
         } catch (error) {
             res.json(error.message)
         }
