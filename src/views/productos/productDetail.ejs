@@ -10,7 +10,9 @@
         </section>
         <section class="main-conteiner">
             <div class="img-product">
-                    <img src="/images/products/<%= product.Images[0].path %>" alt="imagen producto">
+                    <% if (product.Images[0]) { %>
+                        <img src="/images/products/<%= product.Images[0].path %>" alt="imagen producto">
+                    <% } %>  
                     </div>
                     <div class="inf-product">
                         <h4> <%= product.name %> </h4>

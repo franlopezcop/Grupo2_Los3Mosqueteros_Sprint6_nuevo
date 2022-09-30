@@ -139,12 +139,12 @@ const productController = {
             const files = req.files
             let product = req.body
             const resultadosValidaciones = validationResult(req);
-            if (!resultadosValidaciones.isEmpty()){
+            if (resultadosValidaciones.isEmpty()){
                 let images = []
                 const nuevoProducto = await db.Products.create(product);
                 for(let i = 0 ; i<files.length;i++) {
                     images.push({
-                        path: req.files.filename,
+                        path: req.files[i].filename,
                         id_product: nuevoProducto.id
                     })
                 }
@@ -163,7 +163,7 @@ const productController = {
                 if (req.files) {
                     let {files} = req;
                 for (let i = 0 ; i< files.length; i++) {
-                    fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files.filename}`));
+                    fs.unlinkSync(path.join(__dirname, `../../public/images/products/${files[i].filename}`));
                 }
                 };
                     const colors = await db.Colors.findAll();
@@ -217,7 +217,7 @@ const productController = {
             console.log(resultadosValidaciones);
            
             // Con este if preguntamos si hay errores de validación
-            if (!resultadosValidaciones.isEmpty()){
+            if (resultadosValidaciones.isEmpty()){
                 console.log("----- ojo HAY ERRORES -----------------")
                 
                 // Si hay errores borramos los archivos que cargó multer
@@ -285,19 +285,23 @@ const productController = {
         try {
             const { id } = req.params;
             let imagenesBorrar = await db.Images.findAll({where: {id_product: id}});
+            console.log("Estos estoy borrando:" + imagenesBorrar);
             if (imagenesBorrar) {
-                let filesBorrar = imagenesBorrar.filter(image => image.fileName != 'default-product-image.png');
-            for (let i = 0 ; i< filesBorrar.length; i++) {
-                fs.unlinkSync(path.resolve(__dirname, '../../public/images/'+filesBorrar[i].fileName))
-            }
+                let filesBorrar = imagenesBorrar.filter(image => image.path != 'default-product-image.png');
+                for (let i = 0 ; i< filesBorrar.length; i++) {
+                    if (filesBorrar[i].path != null ) {
+                        fs.unlinkSync(path.resolve(__dirname, '../../public/images/products/'+filesBorrar[i].path))
+                    }
+                }
+                await db.Images.destroy({
+                    where: {
+                        id_product: id
+                    }               
+                }, {
+                    force: true
+                })
             };
-            await db.Images.destroy({
-                where: {
-                    product_id: id
-                }               
-            }, {
-                force: true
-            })
+            
             await db.Products.destroy({
                 where: {
                     id
@@ -305,7 +309,9 @@ const productController = {
             }, {
                 force: true
             })
-            res.redirect("/");
+            
+            ;
+            res.redirect("/products");
         } catch (error) {
             res.json({error: error.message}); 
         }
