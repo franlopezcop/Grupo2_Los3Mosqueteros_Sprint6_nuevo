@@ -55,12 +55,12 @@
     </div>
     <div>
         <label for="category">Categoría</label>
-        <select name="category" id="category" class="category-control">
+        <select name="id_category" id="category" class="category-control">
             <option value="">Elegí</option>
-            <option value="table">Mesas</option>
-            <option value="coffeeTable">Mesas Ratonas</option>
-            <option value="desk">Escritorios</option>
-            <option value="mirror">Espejos</option>
+            <option value="2">Mesas</option>
+            <option value="3">Mesas Ratonas</option>
+            <option value="1">Escritorios</option>
+            <option value="4">Espejos</option>
         </select>
         <% if (locals.errors && errors.category) { %>
             <div class="errorValidacion">
@@ -70,11 +70,11 @@
     </div>
     <div>
         <label for="colors">Color</label>
-        <select name="colors" id="colors" class="control">
+        <select name="id_color" id="colors" class="control">
                 <option value="">Elegí</option>
-                <option value="black">Negro</option>
-                <option value="brown">Marrón</option>
-                <option value="white">Blanco</option>
+                <option value="1">Negro</option>
+                <option value="2">Marrón</option>
+                <option value="3">Blanco</option>
             </select>
             <% if (locals.errors && errors.colors) { %>
                 <div class="errorValidacion">
