@@ -154,7 +154,7 @@ const productController = {
 
                 } else {
                     await db.Images.create([{
-                        path: 'default-product-image.svg',
+                        path: 'default-product-image.png',
                         id_product: product.id
                     }])
                     res.redirect('/products')
@@ -226,7 +226,7 @@ const productController = {
                 // Si hay errores borramos los archivos que cargó multer
                 if(files){
                     for (let i = 0 ; i< files.length; i++) {
-                        fs.unlinkSync(path.resolve(__dirname, '../../public/images/products'+files[i].filename))
+                        fs.unlinkSync(path.resolve(__dirname, '../../public/images/products/'+files[i].filename))
                     } 
                 }
                 // files.forEach( file => {
@@ -252,13 +252,14 @@ const productController = {
 
             let dataUpdate = req.body
             let images = []
-            const product = await db.Product.update({
+            const product = await db.Products.update({
                 ...dataUpdate
             }, {
                 where: {
                     id: idToUpdate,
                 }
             });
+
             for(let i = 0 ; i<files.length;i++) {
                 images.push({
                     path: files[i].filename,
@@ -268,18 +269,20 @@ const productController = {
             if (images.length > 0) {
                 const oldImages = await db.Images.findAll({where: {id_product: idToUpdate}})
                 oldImages.forEach( image => {
-                    fs.unlinkSync(path.resolve(__dirname, '../../public/images/products'+image.path))
+                    fs.unlinkSync(path.resolve(__dirname, '../../public/images/products/'+image.path))
                 })
                 await db.Images.destroy({where: {id_product: idToUpdate}})
                 await db.Images.bulkCreate(images)
-                res.redirect('/products')
-            } else {
-                await db.Images.create([{
-                    path: 'default-product-image.png',
-                    id_product: nuevoProducto.id
-                }])
-                res.redirect('/products')
             }
+            res.redirect('/products');
+             /* else {
+                await db.Images.destroy({where: {id_product: idToUpdate}})
+                await db.Images.create({
+                    path: 'default-product-image.png',
+                    id_product: idToUpdate
+                })
+                res.redirect('/products')
+            } */
         } catch (error) {
             res.json({error: error.message}); 
         }
