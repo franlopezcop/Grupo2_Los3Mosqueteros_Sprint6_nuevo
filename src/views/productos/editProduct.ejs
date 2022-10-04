@@ -59,11 +59,16 @@
                 <div>
                     <label for="discount">Descuento</label>
                     <input class='control' type="number" id="discount" name="discount" placeholder="0" value="<%= locals.productToEdit && productToEdit.discount || locals.oldData && oldData.discount %>" >
+                    <% if (locals.errors && errors.discount) { %>
+                        <div class="errorValidacion">
+                            <p><%= errors.discount.msg %></p>
+                        </div> 
+                    <% } %>
 
                 </div>
                 <div>
-                    <label for="category">Categoría</label>
-                    <select name="id_category" id="category" class="category-control">
+                    <label for="id_category">Categoría</label>
+                    <select name="id_category" id="id_category" class="category-control">
                         <!-- <option value="">Elegí</option>
                         <option value="table">Mesas</option>
                         <option value="coffeeTable">Mesas Ratonas</option>
@@ -90,8 +95,8 @@
                     <% } %>
                 </div>
                 <div>
-                    <label for="colors">Color</label>
-                    <select name="id_color" id="colors" class="control">
+                    <label for="id_color">Color</label>
+                    <select name="id_color" id="id_color" class="control">
                             <!-- <option value="">Elegí</option>
                             <option value="black">Negro</option>
                             <option value="brown">Marrón</option>
